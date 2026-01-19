@@ -1,0 +1,24 @@
+spring:
+  application:
+    name: dynamic-form-builder-backend
+  datasource:
+    url: jdbc:postgresql://localhost:5433/dynamic-form
+    username: manager
+    password: password
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    generate-ddl: true
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        default_schema: public
+
+server:
+  port: 8090
+jwt:
+  secret: thisIsMysecregtfrdesww233eggtffeeddgkjjhhtdhttebd54ndhdhfhhhshs8877465sbbdd
+  expiration: 1200000
