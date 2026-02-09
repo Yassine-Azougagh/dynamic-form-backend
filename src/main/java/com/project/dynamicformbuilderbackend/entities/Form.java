@@ -33,5 +33,5 @@ public class Form {
     private int version;
     @Column(name = "STATUS", nullable = false)
     @Enumerated(EnumType.STRING)
-    private FormStatus status;
+    private FormStatus status = FormStatus.DRAFT;
 }
