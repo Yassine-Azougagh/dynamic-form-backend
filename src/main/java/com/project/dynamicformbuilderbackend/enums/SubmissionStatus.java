@@ -1,11 +1,11 @@
 package com.project.dynamicformbuilderbackend.enums;
 
-public enum FormStatus {
-    DRAFT("DRAFT"), PUBLISHED("PUBLISHED"), CLOSED("CLOSED"), DELETED("DELETED");
+public enum SubmissionStatus {
+    DRAFT("DRAFT"), SUBMITTED("SUBMITTED"), DELETED("DELETED");
 
     private final String status;
 
-    private FormStatus(String status) {
+    private SubmissionStatus(String status) {
         this.status = status;
     }
     public String getStatus() {

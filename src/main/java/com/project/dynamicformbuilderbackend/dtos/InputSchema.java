@@ -1,7 +1,14 @@
 package com.project.dynamicformbuilderbackend.dtos;
 
+import lombok.With;
+
 import java.util.List;
 
-public record InputSchema(String type, String title, String placeholder, InputConditions conditions,
-                          List<String> options) {
+@With
+public record InputSchema(String id,
+                          String type,
+                          String title,
+                          String placeholder,
+                          InputConditions conditions,
+                          List<InputOption> options) {
 }

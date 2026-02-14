@@ -1,24 +1,21 @@
 package com.project.dynamicformbuilderbackend.entities;
 
+import com.project.dynamicformbuilderbackend.enums.SubmissionStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "FORM_RESPONSE")
+@Table(name = "SUBMISSION")
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
 @ToString
-public class FormResponse {
+public class Submission extends BaseEntity{
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private String id;
 
     @ManyToOne(optional = false)
     private Form form;
@@ -30,6 +27,7 @@ public class FormResponse {
     @Column(nullable = false)
     private String answersJson;
 
-    @Column(nullable = false)
-    private LocalDateTime submittedAt;
+    @Column(name = "STATUS", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private SubmissionStatus status = SubmissionStatus.DRAFT;
 }

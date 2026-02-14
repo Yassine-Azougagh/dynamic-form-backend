@@ -16,21 +16,14 @@ import java.util.List;
 @AllArgsConstructor
 @Data
 @ToString
-public class Form {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private String id;
+public class Form extends BaseEntity{
     @Column(name = "TITLE", nullable = false)
     private String title;
     @Lob    @Basic(fetch = FetchType.LAZY)
     @Column(name = "SCHEMA")
     private String schemaJson;
-    @ManyToOne(optional = false)
-    private User createdBy;
     @OneToMany(mappedBy = "form", fetch = FetchType.LAZY)
-    private List<FormResponse> formResponses;
-    @Column(name = "VERSION")
-    private int version;
+    private List<Submission> submissions;
     @Column(name = "STATUS", nullable = false)
     @Enumerated(EnumType.STRING)
     private FormStatus status = FormStatus.DRAFT;

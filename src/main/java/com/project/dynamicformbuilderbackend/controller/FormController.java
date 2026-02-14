@@ -44,9 +44,9 @@ public class FormController {
         return ResponseEntity.ok(formService.getListForm());
     }
 
-    @GetMapping("/:id")
+    @GetMapping("/{id}")
     @Operation(summary = "Get Form by id", description = "Get Form by id")
-    public ResponseEntity<FormDto> getFormById(String id, Principal principal) {
+    public ResponseEntity<FormDto> getFormById(@PathVariable String id, Principal principal) {
         log.info("Get list form by user : {}", principal.getName());
         return ResponseEntity.ok(formService.getFormById(id));
     }

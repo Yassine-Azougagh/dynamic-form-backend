@@ -1,6 +1,7 @@
 package com.project.dynamicformbuilderbackend.dtos;
 
 import com.project.dynamicformbuilderbackend.enums.FormStatus;
+import com.project.dynamicformbuilderbackend.enums.SubmissionStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,12 +14,13 @@ import java.util.List;
 @AllArgsConstructor
 @Data
 @ToString
-public class FormDto {
+public class SubmissionDto {
     String id;
-    String title;
+    String formId;
     String createdBy;
     String createdAt;
     int version;
-    FormStatus status;
-    List<InputSchema> schema;
+    SubmissionStatus status;
+    String submittedBy;
+    List<FieldSubmissionDto> schema;
 }

@@ -15,11 +15,8 @@ import java.util.List;
 @AllArgsConstructor
 @Data
 @ToString
-public class User {
+public class User extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private String id;
     @Column(unique = true, nullable = false)
     private String username;
     @Column(nullable = false)
@@ -32,5 +29,5 @@ public class User {
     private List<Form> forms;
 
     @OneToMany(mappedBy = "submittedBy", fetch = FetchType.LAZY)
-    private List<FormResponse> formResponses;
+    private List<Submission> submissions;
 }

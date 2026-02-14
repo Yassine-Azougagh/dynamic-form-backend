@@ -1,10 +1,7 @@
 package com.project.dynamicformbuilderbackend.service;
 
 
-import com.project.dynamicformbuilderbackend.dtos.BaseResponse;
-import com.project.dynamicformbuilderbackend.dtos.FormDto;
-import com.project.dynamicformbuilderbackend.dtos.FormRequestDto;
-import com.project.dynamicformbuilderbackend.dtos.InputSchema;
+import com.project.dynamicformbuilderbackend.dtos.*;
 import com.project.dynamicformbuilderbackend.entities.Form;
 import com.project.dynamicformbuilderbackend.entities.User;
 import com.project.dynamicformbuilderbackend.enums.FormStatus;
@@ -18,8 +15,10 @@ import tools.jackson.core.JacksonException;
 import tools.jackson.core.type.TypeReference;
 import tools.jackson.databind.ObjectMapper;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.Map;
+import java.util.UUID;
 
 @Service
 public class FormService {
@@ -41,11 +40,16 @@ public class FormService {
         User user = userRepository.findByUsername(userId);
         log.info("Creating form by user : {}", user);
 
-        form.setCreatedBy(user);
+        form.setCreatedBy(user.getUsername());
+        form.setCreatedAt(LocalDate.now());
 
-        String schema = objectMapper.writeValueAsString(formRequestDto.schemas());
-        log.info("Creating form by schema : {}", schema);
-        form.setSchemaJson(schema);
+        List<InputSchema> schema =  formRequestDto.schemas().stream()
+                .map(s -> s.withId(UUID.randomUUID().toString()))
+                .toList();
+
+        String schemaAsString = objectMapper.writeValueAsString(schema);
+        log.info("Creating form by schema : {}", schemaAsString);
+        form.setSchemaJson(schemaAsString);
 
         formRepository.save(form);
         return BaseResponse.builder()
@@ -61,22 +65,32 @@ public class FormService {
 
         return formRepository.findAll()
                 .stream()
-                .map(this::getFormDto)
+                .map(this::getFormInfosDto)
                 .toList();
 
     }
 
+    private FormDto getFormInfosDto(Form form) {
+        FormDto formDto = new FormDto();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+        formDto.setId(form.getId());
+        formDto.setTitle(form.getTitle());
+        formDto.setStatus(form.getStatus());
+        formDto.setVersion(form.getVersion());
+        formDto.setCreatedBy(form.getCreatedBy());
+        formDto.setCreatedAt(form.getCreatedAt().format(formatter));
+
+        return formDto;
+    }
+
     private FormDto getFormDto(Form form) {
         FormDto formDto = new FormDto();
-
         try{
-            formDto.setId(form.getId());
-            formDto.setTitle(form.getTitle());
-            formDto.setStatus(form.getStatus());
-            formDto.setVersion(form.getVersion());
-            formDto.setCreatedBy(form.getCreatedBy().getUsername());
+            formDto = getFormInfosDto(form);
 
-            List<InputSchema> schema = objectMapper.readValue(form.getSchemaJson(), new TypeReference<List<InputSchema>>() {});
+            TypeReference<List<InputSchema>> inputSchemaTypeRef = new TypeReference<List<InputSchema>>() {};
+            List<InputSchema> schema = objectMapper.readValue(form.getSchemaJson(), inputSchemaTypeRef);
             formDto.setSchema(schema);
 
         }catch (JacksonException ex){
@@ -90,5 +104,6 @@ public class FormService {
         return formRepository.findById(id)
                 .map(this::getFormDto)
                 .orElse(null);
+
     }
 }

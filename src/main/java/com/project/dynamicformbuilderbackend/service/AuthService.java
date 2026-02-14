@@ -13,6 +13,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+
 import static com.project.dynamicformbuilderbackend.utilities.Constants.ACCOUNT_NOT_FOUND_ERROR;
 import static com.project.dynamicformbuilderbackend.utilities.Constants.DUPLICATE_ACCOUNT_ERROR;
 
@@ -43,6 +45,7 @@ public class AuthService {
             newUser.setUsername(signupRequestDto.username());
             newUser.setPassword(passwordEncoder.encode(signupRequestDto.password()));
             newUser.setRole(Role.USER);
+            newUser.setCreatedAt(LocalDate.now());
 
             userRepository.save(newUser);
             return BaseResponse.builder()
