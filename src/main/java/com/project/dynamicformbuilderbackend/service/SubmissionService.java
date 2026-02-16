@@ -98,7 +98,8 @@ public class SubmissionService {
         submissionDto.setVersion(submission.getVersion());
         submissionDto.setCreatedBy(submission.getCreatedBy());
         submissionDto.setCreatedAt(submission.getCreatedAt().format(formatter));
-
+        submissionDto.setFormId(submission.getForm() != null ? submission.getForm().getId() : null);
+        submissionDto.setFormTitle(submission.getForm() != null ? submission.getForm().getTitle() : "");
         Optional<Form> formOptional = formRepository.findById(submission.getForm().getId());
         formOptional.ifPresent(form -> submissionDto.setFormId(form.getTitle()));
 
@@ -130,4 +131,24 @@ public class SubmissionService {
 
     }
 
+    public BaseResponse validateSubmission(String formId, String name) {
+        Optional<Submission> submissionOptional = submissionRepository.findByFormIdAndSubmittedBy(formId, name);
+
+        if(submissionOptional.isEmpty())
+            return BaseResponse.builder()
+                    .success(false)
+                    .code("ERROR")
+                    .message("Submission not found")
+                    .build();
+
+        Submission submission = submissionOptional.get();
+        submission.setStatus(SubmissionStatus.SUBMITTED);
+        submissionRepository.save(submission);
+
+        return BaseResponse.builder()
+                .success(true)
+                .code("SUCCESS")
+                .message("Submission validated successfully")
+                .build();
+    }
 }

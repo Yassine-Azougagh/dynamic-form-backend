@@ -17,6 +17,7 @@ import java.util.List;
 public class SubmissionDto {
     String id;
     String formId;
+    String formTitle;
     String createdBy;
     String createdAt;
     int version;

@@ -35,6 +35,14 @@ public class SubmissionController {
         return ResponseEntity.ok(submissionService.createSubmission(submissionRequestDto, principal.getName()));
     }
 
+    @PostMapping("/validate")
+    @Operation(summary = "Validate Form Submission so the admin can consult it",
+            description = "Validate Form Submission so the admin can consult it")
+    public ResponseEntity<BaseResponse> validateSubmission(@RequestParam String formId, Principal principal) {
+        log.info("validate form Submission by user : {}", principal.getName());
+        return ResponseEntity.ok(submissionService.validateSubmission(formId, principal.getName()));
+    }
+
     @GetMapping("/list")
     @Operation(summary = "Get List Form Submission", description = "Get List Form Submission")
     public ResponseEntity<List<SubmissionDto>> getListSubmission(Principal principal) {
