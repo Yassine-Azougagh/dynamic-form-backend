@@ -8,8 +8,13 @@ import com.project.dynamicformbuilderbackend.enums.FormStatus;
 import com.project.dynamicformbuilderbackend.repository.FormRepository;
 import com.project.dynamicformbuilderbackend.repository.UserRepository;
 import jakarta.transaction.Transactional;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import tools.jackson.core.JacksonException;
 import tools.jackson.core.type.TypeReference;
@@ -61,13 +66,31 @@ public class FormService {
     }
 
     @Transactional
-    public List<FormDto> getListForm() {
+    public FormListDto getAdminListForm(int page, int size, String sortBy, String username) {
+        String sortCriteria = StringUtils.isEmpty(sortBy) ? "createdAt" : sortBy;
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortCriteria).descending());
+        Page<Form> formPage = formRepository.findAllByCreatedBy(username, pageable);
 
-        return formRepository.findAll()
+        List<FormDto> formDtos = formPage.getContent()
                 .stream()
                 .map(this::getFormInfosDto)
                 .toList();
 
+        return new FormListDto(formDtos, page, size, formPage.getTotalElements(), sortCriteria);
+    }
+
+    @Transactional
+    public FormListDto getUserListForm(int page, int size, String sortBy, String username) {
+        String sortCriteria = StringUtils.isEmpty(sortBy) ? "createdAt" : sortBy;
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortCriteria).descending());
+        Page<Form> formPage = formRepository.findAll(pageable);
+
+        List<FormDto> formDtos = formPage.getContent()
+                .stream()
+                .map(this::getFormInfosDto)
+                .toList();
+
+        return new FormListDto(formDtos, page, size, formPage.getTotalElements() ,sortCriteria);
     }
 
     private FormDto getFormInfosDto(Form form) {

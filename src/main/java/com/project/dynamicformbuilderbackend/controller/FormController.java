@@ -1,10 +1,7 @@
 package com.project.dynamicformbuilderbackend.controller;
 
 
-import com.project.dynamicformbuilderbackend.dtos.BaseResponse;
-import com.project.dynamicformbuilderbackend.dtos.FormDto;
-import com.project.dynamicformbuilderbackend.dtos.FormRequestDto;
-import com.project.dynamicformbuilderbackend.dtos.SignupRequestDto;
+import com.project.dynamicformbuilderbackend.dtos.*;
 import com.project.dynamicformbuilderbackend.entities.Form;
 import com.project.dynamicformbuilderbackend.service.AuthService;
 import com.project.dynamicformbuilderbackend.service.FormService;
@@ -37,11 +34,18 @@ public class FormController {
         return ResponseEntity.ok(formService.createForm(formRequestDto, principal.getName()));
     }
 
-    @GetMapping("/list")
+    @GetMapping("/admin/list")
     @Operation(summary = "Get List Form", description = "Get List Form")
-    public ResponseEntity<List<FormDto>> getListForm(Principal principal) {
+    public ResponseEntity<FormListDto> getAdminListForm(@RequestParam int page, @RequestParam int size, @RequestParam String sortBy, Principal principal) {
         log.info("Get list form by user : {}", principal.getName());
-        return ResponseEntity.ok(formService.getListForm());
+        return ResponseEntity.ok(formService.getAdminListForm(page, size, sortBy, principal.getName()));
+    }
+
+    @GetMapping("/user/list")
+    @Operation(summary = "Get List Form", description = "Get List Form")
+    public ResponseEntity<FormListDto> getUserListForm(@RequestParam int page, @RequestParam int size, @RequestParam String sortBy, Principal principal) {
+        log.info("Get list form by user : {}", principal.getName());
+        return ResponseEntity.ok(formService.getUserListForm(page, size, sortBy, principal.getName()));
     }
 
     @GetMapping("/{id}")
