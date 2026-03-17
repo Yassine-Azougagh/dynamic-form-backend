@@ -1,7 +1,7 @@
 package com.project.dynamicformbuilderbackend.enums;
 
 public enum SubmissionStatus {
-    DRAFT("DRAFT"), SUBMITTED("SUBMITTED"), DELETED("DELETED");
+    DRAFT("DRAFT"), SUBMITTED("SUBMITTED"), VALIDATED("VALIDATED"), DELETED("DELETED");
 
     private final String status;
 

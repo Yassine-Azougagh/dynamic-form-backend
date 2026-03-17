@@ -20,4 +20,6 @@ public interface SubmissionRepository extends JpaRepository<Submission, String> 
 
     @Query("select s from Submission s where s.form.id = :formId and s.submittedBy.username = :username")
     Optional<Submission> findByFormIdAndSubmittedBy(@Param("formId") String formId, @Param("username")  String username);
+
+    List<Submission> findAllByCreatedBy(String createdBy);
 }

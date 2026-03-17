@@ -23,6 +23,7 @@ import tools.jackson.databind.ObjectMapper;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -128,5 +129,26 @@ public class FormService {
                 .map(this::getFormDto)
                 .orElse(null);
 
+    }
+
+    public BaseResponse changeStatus(String id , FormStatus formStatus) {
+        Optional<Form> optionalForm = formRepository.findById(id);
+
+        if(optionalForm.isEmpty())
+            return BaseResponse.builder()
+                    .success(false)
+                    .code("ERROR")
+                    .message("Form not found")
+                    .build();
+
+        Form form = optionalForm.get();
+        form.setStatus(formStatus);
+        formRepository.save(form);
+
+        return BaseResponse.builder()
+                .success(true)
+                .code("SUCCESS")
+                .message("Form stauts changed successfully")
+                .build();
     }
 }

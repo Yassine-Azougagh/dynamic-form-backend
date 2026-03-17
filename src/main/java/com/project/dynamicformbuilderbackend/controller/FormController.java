@@ -3,6 +3,7 @@ package com.project.dynamicformbuilderbackend.controller;
 
 import com.project.dynamicformbuilderbackend.dtos.*;
 import com.project.dynamicformbuilderbackend.entities.Form;
+import com.project.dynamicformbuilderbackend.enums.FormStatus;
 import com.project.dynamicformbuilderbackend.service.AuthService;
 import com.project.dynamicformbuilderbackend.service.FormService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -54,4 +55,20 @@ public class FormController {
         log.info("Get list form by user : {}", principal.getName());
         return ResponseEntity.ok(formService.getFormById(id));
     }
+
+    @PostMapping("/publish/{id}")
+    @Operation(summary = "Publish Form by id", description = "Publish Form by id")
+    public ResponseEntity<BaseResponse> publishForm(@PathVariable String id, Principal principal) {
+        log.info("Publish form by user : {}", principal.getName());
+        return ResponseEntity.ok(formService.changeStatus(id, FormStatus.PUBLISHED));
+    }
+
+    @PostMapping("/delete/{id}")
+    @Operation(summary = "Delete Form by id", description = "Delete Form by id")
+    public ResponseEntity<BaseResponse> deleteForm(@PathVariable String id, Principal principal) {
+        log.info("Delete form by user : {}", principal.getName());
+        return ResponseEntity.ok(formService.changeStatus(id, FormStatus.DELETED));
+    }
+
 }
+

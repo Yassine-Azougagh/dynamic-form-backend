@@ -18,9 +18,11 @@ public class Submission extends BaseEntity{
 
 
     @ManyToOne(optional = false)
+    @ToString.Exclude
     private Form form;
 
     @ManyToOne(optional = false)
+    @ToString.Exclude
     private User submittedBy;
 
     @Lob    @Basic(fetch = FetchType.LAZY)

@@ -5,6 +5,8 @@ import com.project.dynamicformbuilderbackend.dtos.BaseResponse;
 import com.project.dynamicformbuilderbackend.dtos.FormDto;
 import com.project.dynamicformbuilderbackend.dtos.SubmissionDto;
 import com.project.dynamicformbuilderbackend.dtos.SubmissionRequestDto;
+import com.project.dynamicformbuilderbackend.enums.FormStatus;
+import com.project.dynamicformbuilderbackend.enums.SubmissionStatus;
 import com.project.dynamicformbuilderbackend.service.FormService;
 import com.project.dynamicformbuilderbackend.service.SubmissionService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -35,19 +37,11 @@ public class SubmissionController {
         return ResponseEntity.ok(submissionService.createSubmission(submissionRequestDto, principal.getName()));
     }
 
-    @PostMapping("/validate")
-    @Operation(summary = "Validate Form Submission so the admin can consult it",
-            description = "Validate Form Submission so the admin can consult it")
-    public ResponseEntity<BaseResponse> validateSubmission(@RequestParam String formId, Principal principal) {
-        log.info("validate form Submission by user : {}", principal.getName());
-        return ResponseEntity.ok(submissionService.validateSubmission(formId, principal.getName()));
-    }
-
     @GetMapping("/list")
     @Operation(summary = "Get List Form Submission", description = "Get List Form Submission")
-    public ResponseEntity<List<SubmissionDto>> getListSubmission(Principal principal) {
+    public ResponseEntity<List<SubmissionDto>> getListSubmission(@RequestParam String createdBy, Principal principal) {
         log.info("Get list form Submission by user : {}", principal.getName());
-        return ResponseEntity.ok(submissionService.getListSubmission());
+        return ResponseEntity.ok(submissionService.getListSubmission(createdBy));
     }
 
     @GetMapping("/{id}")
@@ -55,5 +49,26 @@ public class SubmissionController {
     public ResponseEntity<SubmissionDto> getSubmissionById(@PathVariable String id, Principal principal) {
         log.info("Get list form Submission by user : {}", principal.getName());
         return ResponseEntity.ok(submissionService.getSubmissionById(id));
+    }
+
+    @PostMapping("/submit/{id}")
+    @Operation(summary = "Submit Submission by id", description = "Submit Submission by id")
+    public ResponseEntity<BaseResponse> submitSubmission(@PathVariable String id, Principal principal) {
+        log.info("Submit Submission by user : {}", principal.getName());
+        return ResponseEntity.ok(submissionService.changeStatus(id, SubmissionStatus.SUBMITTED));
+    }
+
+    @PostMapping("/delete/{id}")
+    @Operation(summary = "delete Submission by id", description = "delete Submission by id")
+    public ResponseEntity<BaseResponse> deleteSubmission(@PathVariable String id, Principal principal) {
+        log.info("delete Submission by user : {}", principal.getName());
+        return ResponseEntity.ok(submissionService.changeStatus(id, SubmissionStatus.DELETED));
+    }
+
+    @PostMapping("/validate/{id}")
+    @Operation(summary = "validate Submission by id", description = "validate Submission by id")
+    public ResponseEntity<BaseResponse> validateSubmission(@PathVariable String id, Principal principal) {
+        log.info("validate Submission by user : {}", principal.getName());
+        return ResponseEntity.ok(submissionService.changeStatus(id, SubmissionStatus.VALIDATED));
     }
 }

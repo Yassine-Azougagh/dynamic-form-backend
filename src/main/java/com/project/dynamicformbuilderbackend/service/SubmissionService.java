@@ -11,6 +11,7 @@ import com.project.dynamicformbuilderbackend.repository.FormRepository;
 import com.project.dynamicformbuilderbackend.repository.SubmissionRepository;
 import com.project.dynamicformbuilderbackend.repository.UserRepository;
 import jakarta.transaction.Transactional;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -79,9 +80,12 @@ public class SubmissionService {
     }
 
     @Transactional
-    public List<SubmissionDto> getListSubmission() {
-
-        return submissionRepository.findAll()
+    public List<SubmissionDto> getListSubmission(String createdBy) {
+        log.info("Getting list of forms by user : {}", createdBy);
+        List<Submission> submissions = StringUtils.isEmpty(createdBy)? submissionRepository.findAll() :
+                submissionRepository.findAllByCreatedBy(createdBy);
+        log.info("getListSubmission : {}", submissions);
+        return submissions
                 .stream()
                 .map(this::getFormInfosDto)
                 .toList();
@@ -131,24 +135,25 @@ public class SubmissionService {
 
     }
 
-    public BaseResponse validateSubmission(String formId, String name) {
-        Optional<Submission> submissionOptional = submissionRepository.findByFormIdAndSubmittedBy(formId, name);
 
-        if(submissionOptional.isEmpty())
+    public BaseResponse changeStatus(String id , SubmissionStatus submissionStatus) {
+        Optional<Submission> optionalSubmission = submissionRepository.findById(id);
+
+        if(optionalSubmission.isEmpty())
             return BaseResponse.builder()
                     .success(false)
                     .code("ERROR")
                     .message("Submission not found")
                     .build();
 
-        Submission submission = submissionOptional.get();
-        submission.setStatus(SubmissionStatus.SUBMITTED);
+        Submission submission = optionalSubmission.get();
+        submission.setStatus(submissionStatus);
         submissionRepository.save(submission);
 
         return BaseResponse.builder()
                 .success(true)
                 .code("SUCCESS")
-                .message("Submission validated successfully")
+                .message("Submission stauts changed successfully")
                 .build();
     }
 }
